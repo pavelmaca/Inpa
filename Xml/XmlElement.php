@@ -92,6 +92,6 @@ class XmlElement extends \SimpleXMLElement {
 				 $found[] = $child;
 			 }
 		}
-		return (!empty($found) ? $found : NULL);
+		return ($found ?: NULL);
 	}
 }
