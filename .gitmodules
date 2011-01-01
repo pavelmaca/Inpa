@@ -1,0 +1,3 @@
+[submodule "Controls/CaptchaControl"]
+	path = Controls/CaptchaControl
+	url = git://github.com/PavelMaca/CaptchaControl.git
