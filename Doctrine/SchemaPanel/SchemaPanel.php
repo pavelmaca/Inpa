@@ -112,7 +112,7 @@ class SchemaPanel implements IBarPanel
 				$message['cls'] = 'error';
 			}
 			$response = new JsonResponse($message);
-			$response->send();
+			$response->send($request, new \Nette\Http\Response());
 			exit;
 		}
 	}
