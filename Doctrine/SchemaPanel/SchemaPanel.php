@@ -2,9 +2,10 @@
 
 namespace Inpa\Doctrine;
 
-use Nette\IDebugPanel;
-use Nette\Debug;
+use Nette\Diagnostics\IBarPanel;
+use Nette\Diagnostics\Debugger;
 use Nette\Environment;
+use Nette\Application\Responses\JsonResponse;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;
 
@@ -14,7 +15,7 @@ use Doctrine\ORM\Tools\SchemaTool;
  * @author Pavel Máca
  * @link https://github.com/davidmoravek/SchemaPanel
  */
-class SchemaPanel implements IDebugPanel
+class SchemaPanel implements IBarPanel
 {
 
 	/** @var bool */
@@ -31,7 +32,7 @@ class SchemaPanel implements IDebugPanel
 
 
 	/**
-	 * IDebugPanel
+	 * IBarPanel
 	 *
 	 * @return string
 	 */
@@ -43,7 +44,7 @@ class SchemaPanel implements IDebugPanel
 
 
 	/**
-	 * IDebugPanel
+	 * IBarPanel
 	 *
 	 * @return string
 	 */
@@ -57,7 +58,7 @@ class SchemaPanel implements IDebugPanel
 
 
 	/**
-	 * IDebugPanel
+	 * IBarPanel
 	 *
 	 * @return string
 	 */
@@ -71,6 +72,7 @@ class SchemaPanel implements IDebugPanel
 	/**
 	 * Ajax request process
 	 * @var EntityManager
+	 * @throws \Nette\InvalidArgumentException
 	 */
 	public function processRequest($em)
 	{
@@ -100,7 +102,7 @@ class SchemaPanel implements IDebugPanel
 						break;
 
 					default:
-						throw new InvalidArgumentException('Invalid argument!');
+						throw new \Nette\InvalidArgumentException('Invalid argument!');
 						break;
 				}
 				$message['text'] = ucfirst($cmd) . ' query was successfully executed';
@@ -109,7 +111,7 @@ class SchemaPanel implements IDebugPanel
 				$message['text'] = $e->getMessage();
 				$message['cls'] = 'error';
 			}
-			$response = new \Nette\Application\JsonResponse($message);
+			$response = new JsonResponse($message);
 			$response->send();
 			exit;
 		}
@@ -123,7 +125,7 @@ class SchemaPanel implements IDebugPanel
 	public static function register(EntityManager $em = NULL)
 	{
 		if(self::$registred === false){
-			Debug::addPanel(new static($em ? $em : Environment::getService('Doctrine\ORM\EntityManager')));
+			Debugger::addPanel(new static($em ? $em : Environment::getService('Doctrine\ORM\EntityManager')));
 			self::$registred = true;
 		}
 	}
