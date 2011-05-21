@@ -1,0 +1,27 @@
+services:
+	doctrine:
+		factory: Inpa\Doctrine\ServiceFactories::createServiceDoctrine
+		arguments: [
+			database,					#key for database configuration
+			[%appDir%/models],			 
+			%appDir%/proxies, 
+			App\Models\Proxies,			#optional, default is "App\Models\Proxies"
+			[mysqlSessionInitListener]	#optional
+		]
+     
+	doctrineSchemaPanel:
+		factory: Inpa\Doctrine\ServiceFactories::registerSchemaPanel
+		arguments: [
+			'@doctrine',				#container with EntintyFactory service
+			entityManager				#optional, EntityManager service name/alias
+		]
+		run: true
+        
+database:
+	driver: pdo_mysql
+	host: hostname
+	database: dbname
+	user: username
+	password: topsecretpassword
+	charset: utf8
+    
