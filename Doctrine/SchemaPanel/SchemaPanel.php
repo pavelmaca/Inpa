@@ -47,13 +47,12 @@ class SchemaPanel implements IBarPanel
 	/**
 	 * IBarPanel
 	 *
-	 * @return string
+	 * @return Nette\Templating\FileTemplate
 	 */
 	public function getPanel()
 	{
-		ob_start();
-		require_once __DIR__ . '/schema.panel.phtml';
-		return ob_get_clean();
+		$template = new Nette\Templating\FileTemplate(__DIR__ . '/schema.panel.phtml');
+		return $template;
 	}
 
 
