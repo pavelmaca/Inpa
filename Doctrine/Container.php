@@ -20,17 +20,7 @@ class Container extends Nette\DI\Container
 		$this->addService("context", $context);
 	}
 
-
-
 	/*	 * ******************* ServiceFactories ******************* */
-
-	/**
-	 * @return void
-	 */
-	public function createServiceSchemaPanel()
-	{
-		return SchemaPanel::register();
-	}
 
 	/**
 	 * @return Cache
