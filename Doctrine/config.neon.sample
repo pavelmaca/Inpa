@@ -20,7 +20,7 @@ services:
 database:
 	driver: pdo_mysql
 	host: hostname
-	database: dbname
+	dbname: dbname
 	user: username
 	password: topsecretpassword
 	charset: utf8
