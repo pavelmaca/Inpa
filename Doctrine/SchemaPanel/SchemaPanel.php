@@ -2,6 +2,7 @@
 
 namespace Inpa\Doctrine;
 
+use Nette;
 use Nette\Diagnostics\IBarPanel;
 use Nette\Diagnostics\Debugger;
 use Nette\Environment;
@@ -18,15 +19,15 @@ use Doctrine\ORM\Tools\SchemaTool;
 class SchemaPanel implements IBarPanel
 {
 
-	/** @var bool */
-	private static $registred = false;
-
 	/**
-	 * @param EntityManager $em
+	 * @param Nette\DI\IContainer
 	 */
-	public function __construct($em)
+	public function __construct(Nette\DI\IContainer $container, $EMserviceName)
 	{
-		$this->processRequest($em);
+		if(!$container->hasService($EMserviceName)){
+			throw new Nette\InvalidStateException("Service '$EMserviceName' required for new instance of ". __CLASS__);
+		}
+		$this->processRequest($container, $EMserviceName);
 	}
 
 
@@ -71,19 +72,21 @@ class SchemaPanel implements IBarPanel
 
 	/**
 	 * Ajax request process
-	 * @var EntityManager
-	 * @throws \Nette\InvalidArgumentException
+	 * @var Nette\DI\IContainer
+	 * @throws Nette\InvalidArgumentException
 	 */
-	public function processRequest($em)
+	public function processRequest(Nette\DI\IContainer $container, $EMserviceName)
 	{
 		$request = Environment::getHttpRequest();
+		
 
 		if ($request->isPost() && $request->isAjax() && $request->getHeader('X-Schema-Client')) {
-
+			
 			$cmd = file_get_contents('php://input', TRUE);
 		
+			$em = $container->getService($EMserviceName);
 			$schemaTool = new SchemaTool($em);
-		
+			
 			try {
 				switch ($cmd) {
 					case 'create':
@@ -102,17 +105,18 @@ class SchemaPanel implements IBarPanel
 						break;
 
 					default:
-						throw new \Nette\InvalidArgumentException('Invalid argument!');
+						throw new Nette\InvalidArgumentException('Invalid argument!');
 						break;
 				}
 				$message['text'] = ucfirst($cmd) . ' query was successfully executed';
 				$message['cls'] = 'success';
-			} catch (Exception $e) {
+			} catch (\Exception $e) {
+	
 				$message['text'] = $e->getMessage();
 				$message['cls'] = 'error';
 			}
 			$response = new JsonResponse($message);
-			$response->send($request, new \Nette\Http\Response());
+			$response->send($request, new Nette\Http\Response());
 			exit;
 		}
 	}
@@ -120,14 +124,14 @@ class SchemaPanel implements IBarPanel
 
 
 	/**
-	 * @param EntityManager $em
+	 * @param Nette\DI\IContainer
+	 * @return SchemaPanel
 	 */
-	public static function register(EntityManager $em = NULL)
+	public static function register(Nette\DI\IContainer $container, $EMserviceName = 'entityManager')
 	{
-		if(self::$registred === false){
-			Debugger::addPanel(new static($em ? $em : Environment::getService('Doctrine\ORM\EntityManager')));
-			self::$registred = true;
-		}
+		$panel = new static($container, $EMserviceName);		
+		Debugger::$bar->addPanel($panel);
+		return $panel;
 	}
 
 }
