@@ -13,6 +13,16 @@ use Inpa;
 class ServiceFactories
 {
 
+	/**
+	 *
+	 * @param Nette\DI\Container $container
+	 * @param string $databaseConfigKey
+	 * @param mixed $entityDirs
+	 * @param string $proxyDir
+	 * @param string $proxyNamespace
+	 * @param array $listeners
+	 * @return Container 
+	 */
 	public static function createServiceDoctrine(Nette\DI\Container $container, $databaseConfigKey, $entityDirs, $proxyDir, $proxyNamespace = "\App\Models\Proxy", $listeners = array())
 	{
 		$doctrine = new Container($container);
@@ -24,8 +34,23 @@ class ServiceFactories
 		return $doctrine;
 	}
 	
-	public static function registerSchemaPanel(Nette\DI\Container $container, Container $doctrine){
-		return SchemaPanel::register($doctrine);
+	/**
+	 *
+	 * @param Nette\DI\Container $container
+	 * @param mixed $service
+	 * @param string $entityManagerName
+	 * @return SchemaPanel
+	 */
+	public static function registerSchemaPanel(Nette\DI\Container $container, $service, $entityManagerName = "entityManager"){
+		if($service instanceof Nette\DI\IContainer && $service->hasService($entityManagerName)){
+			$entityManager = $service->getService($entityManagerName);
+		}elseif( $service instanceof \Doctrine\ORM\EntityManager){
+			$entityManager = $service;
+		}else{
+			throw new \Nette\InvalidArgumentException("Argument \$service must be instance of Nette\DI\IContainer with service '$entityManagerName' or instance of Doctrine\ORM\EntityManager");
+		}
+		
+		return SchemaPanel::register($entityManager);
 	}
 
 }
