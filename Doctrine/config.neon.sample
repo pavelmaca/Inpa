@@ -1,4 +1,12 @@
 services:
+	doctrineLoader:
+			factory: Inpa\Doctrine\ServiceFactories::registerDoctrineLoader
+			run: true
+      
+	symfonyLoader:
+		factory: Inpa\Doctrine\ServiceFactories::registerSymfonyLoader
+		run: true
+
 	doctrine:
 		factory: Inpa\Doctrine\ServiceFactories::createServiceDoctrine
 		arguments: [

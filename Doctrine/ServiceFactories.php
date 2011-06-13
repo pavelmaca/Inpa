@@ -50,7 +50,25 @@ class ServiceFactories
 			throw new \Nette\InvalidArgumentException("Argument \$service must be instance of Nette\DI\IContainer with service '$entityManagerName' or instance of Doctrine\ORM\EntityManager");
 		}
 		
-		return SchemaPanel::register($entityManager);
+		return Panels\SchemaPanel::register($entityManager);
+	}
+	
+	/**
+	 *
+	 * @param Nette\DI\Container $container
+	 * @return DoctrineLoader
+	 */
+	public static function registerDoctrineLoader(Nette\DI\Container $container){
+		return Loaders\DoctrineLoader::register();
+	}
+	
+	/**
+	 *
+	 * @param Nette\DI\Container $container
+	 * @return SymfonyLoader 
+	 */
+	public static function registerSymfonyLoader(Nette\DI\Container $container){
+		return Loaders\SymfonyLoader::register();
 	}
 
 }
