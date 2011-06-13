@@ -31,11 +31,11 @@ class Container extends Nette\DI\Container
 	}
 
 	/**
-	 * @return Panel
+	 * @return \Inpa\Doctrine\Panels\DebugPanel
 	 */
 	protected function createServiceLogger()
 	{
-		return Panel::register();
+		return \Inpa\Doctrine\Panels\DebugPanel::register();
 	}
 
 	/**
