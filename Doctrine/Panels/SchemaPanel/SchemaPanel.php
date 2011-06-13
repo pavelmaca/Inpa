@@ -1,6 +1,6 @@
 <?php
 
-namespace Inpa\Doctrine;
+namespace Inpa\Doctrine\Panels;
 
 use Nette;
 use Nette\Diagnostics\IBarPanel;

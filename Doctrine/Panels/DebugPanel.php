@@ -1,6 +1,6 @@
 <?php
 
-namespace Inpa\Doctrine;
+namespace Inpa\Doctrine\Panels;
 
 use Nette\Diagnostics\Debugger,
 	Nette\Database\Connection;
@@ -11,7 +11,7 @@ use Nette\Diagnostics\Debugger,
  * @author	David Grudl
  * @author	Patrik Votoček
  */
-class Panel extends \Nette\Object implements \Nette\Diagnostics\IBarPanel, \Doctrine\DBAL\Logging\SQLLogger
+class DebugPanel extends \Nette\Object implements \Nette\Diagnostics\IBarPanel, \Doctrine\DBAL\Logging\SQLLogger
 {
 	/** @var int logged time */
 	public $totalTime = 0;
