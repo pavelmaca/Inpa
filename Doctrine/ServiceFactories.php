@@ -33,7 +33,7 @@ class ServiceFactories
 		$doctrine->params["listeners"] = (array) $listeners;
 		return $doctrine;
 	}
-	
+
 	/**
 	 *
 	 * @param Nette\DI\Container $container
@@ -41,34 +41,57 @@ class ServiceFactories
 	 * @param string $entityManagerName
 	 * @return SchemaPanel
 	 */
-	public static function registerSchemaPanel(Nette\DI\Container $container, $service, $entityManagerName = "entityManager"){
-		if($service instanceof Nette\DI\IContainer && $service->hasService($entityManagerName)){
+	public static function registerSchemaPanel(Nette\DI\Container $container, $service, $entityManagerName = "entityManager")
+	{
+		if ($service instanceof Nette\DI\IContainer && $service->hasService($entityManagerName)) {
 			$entityManager = $service->getService($entityManagerName);
-		}elseif( $service instanceof \Doctrine\ORM\EntityManager){
+		} elseif ($service instanceof \Doctrine\ORM\EntityManager) {
 			$entityManager = $service;
-		}else{
+		} else {
 			throw new \Nette\InvalidArgumentException("Argument \$service must be instance of Nette\DI\IContainer with service '$entityManagerName' or instance of Doctrine\ORM\EntityManager");
 		}
-		
+
 		return Panels\SchemaPanel::register($entityManager);
 	}
-	
+
 	/**
 	 *
 	 * @param Nette\DI\Container $container
 	 * @return DoctrineLoader
 	 */
-	public static function registerDoctrineLoader(Nette\DI\Container $container){
+	public static function registerDoctrineLoader(Nette\DI\Container $container)
+	{
 		return Loaders\DoctrineLoader::register();
 	}
-	
+
 	/**
 	 *
 	 * @param Nette\DI\Container $container
 	 * @return SymfonyLoader 
 	 */
-	public static function registerSymfonyLoader(Nette\DI\Container $container){
+	public static function registerSymfonyLoader(Nette\DI\Container $container)
+	{
 		return Loaders\SymfonyLoader::register();
+	}
+
+	/**
+	 * @param Nette\DI\IContainer $container
+	 * @param mixed $service
+	 * @param string $userEntityName
+	 * @param string $entityManagerName
+	 * @return Inpa\Doctrine\Security\Authenticator
+	 */
+	public static function createServiceAuthenticator(Nette\DI\IContainer $container, $service, $userEntityName, $entityManagerName = "entityManager")
+	{
+		if ($service instanceof Doctrine\ORM\EntityManager) {
+			$repository = $service->getRepository($userEntityName);
+		} elseif ($service instanceof Nette\DI\IContainer && $service->hasService($entityManagerName)) {
+			$repository = $service->getService($entityManagerName)->getRepository($userEntityName);
+		} else {
+			throw new Nette\InvalidArgumentException("Argument \$service must be instance of Nette\DI\IContainer with service '$entityManagerName' or instance of Doctrine\ORM\EntityManager");
+		}
+
+		return new Inpa\Doctrine\Security\Authenticator($repository);
 	}
 
 }

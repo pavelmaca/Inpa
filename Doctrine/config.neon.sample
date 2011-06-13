@@ -7,6 +7,10 @@ services:
 		factory: Inpa\Doctrine\ServiceFactories::registerSymfonyLoader
 		run: true
 
+	authenticator: 
+			factory: Inpa\Doctrine\ServiceFactories::createServiceAuthenticator
+			arguments: ['@doctrine', Inpa\Doctrine\Entities\UserEntity]
+
 	doctrine:
 		factory: Inpa\Doctrine\ServiceFactories::createServiceDoctrine
 		arguments: [
